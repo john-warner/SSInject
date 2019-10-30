@@ -1,0 +1,2 @@
+# SSInject
+Javascript dependency injector
