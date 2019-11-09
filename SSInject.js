@@ -1,6 +1,6 @@
 ﻿$$Inject = function () {
 
-    var version = '0.5.0';
+    var version = '0.5.1';
     var container = {};
 
     function RegisterType(type, name, value, parameters) {
@@ -10,16 +10,6 @@
     }
 
     function RegisterDependency(name, value, parameters) {
-
-        if (value && typeof value === 'function') {
-            RegisterType("Function", name, value, parameters);
-        }
-        else {
-            RegisterType("Object", name, value);
-        }
-    }
-
-    function RegisterInterface(name, value, parameters) {
 
         if (value && typeof value === 'function') {
             RegisterType("Function", name, value, parameters);
@@ -77,9 +67,6 @@
     function GetDependency(name, parameters) {
         if (container.hasOwnProperty(name)) {
             var result = GetTypeResult(container[name], parameters);
-
-            //if ($.isPlainObject(result) && result.hasOwnProperty('oninject') && $.isFunction(result['oninject']))
-            //    result['oninject']();
 
             return result;
         }
@@ -220,9 +207,7 @@
     return {
         version: version,
         register: RegisterDependency,
-        registerInterface: RegisterInterface,
         decorate: RegisterDecorator,
         get: Get
-        //,resolveDecorated: ResolveDecorated
     };
 }();

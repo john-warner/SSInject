@@ -36,13 +36,13 @@ test('Test injection', function (assert) {
     assert.deepEqual(result, expected);
 });
 
-test('Test registerInterface', function (assert) {
-    var result = [];
-    $$Inject.registerInterface('TestRegisterArrow', () => { return 'success'; });
-    result = $$Inject.get('TestRegisterArrow');
-    var expected = 'success';
-    assert.deepEqual(result, expected);
-});
+// test('Test registerInterface', function (assert) {
+//     var result = [];
+//     $$Inject.registerInterface('TestRegisterArrow', () => { return 'success'; });
+//     result = $$Inject.get('TestRegisterArrow');
+//     var expected = 'success';
+//     assert.deepEqual(result, expected);
+// });
 
 test('Test get multiple', function (assert) {
     $$Inject.register('InjectedAM', () =>  { return { a: 'A'}; });
