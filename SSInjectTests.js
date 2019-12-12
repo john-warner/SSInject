@@ -82,6 +82,14 @@ test('Test decorate', function (assert) {
     assert.deepEqual(result, expected);
 });
 
+test('Test resolve', function (assert) {
+    var result = [];
+    $$Inject.register('TestResolve', () => { result = 'Success'; });
+    $$Inject.resolve((_TestResolve) => { });
+    var expected = 'Success';
+    assert.deepEqual(result, expected);
+});
+
 // test('Test resolveDecorated', function (assert) {
 //     $$Inject.register('InjectedResolve', () => { return { Handle: (a) => a }});
 //     $$Inject.decorate('InjectedResolve', (decorated) =>  { return decorated.Handle(); });

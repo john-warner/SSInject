@@ -1,11 +1,20 @@
-﻿$$Inject = function () {
+﻿
 
-    var version = '0.5.1';
+/*jshint esversion: 9 */
+
+
+$$Inject = function () {
+
+    var version = '0.5.3';
     var container = {};
+
+    function GetContainerItem(type, value, parameters) {
+        return { type: type, value: value, parameters: parameters, decorated: null };
+    }
 
     function RegisterType(type, name, value, parameters) {
         if (CheckName(name)) {
-            container[name] = { type: type, value: value, parameters: parameters, decorated: null };
+            container[name] = GetContainerItem(type, value, parameters);
         }
     }
 
@@ -62,6 +71,14 @@
         }
 
         return result;
+    }
+
+    function ResolveFunction(f, ...parameters) {
+        let item = GetContainerItem('Function', f);
+        if (parameters.length > 0)
+            return GetFunction(item, parameters);
+        else
+            return GetFunction(item);
     }
 
     function GetDependency(name, parameters) {
@@ -202,12 +219,50 @@
         } catch (err) {
           return false;
         }
-      }
+    }
+
+    function WaitUntilRegistered(name) {
+        if (container.hasOwnProperty(name) && container[name] instanceof Promise) {
+            return container[p];
+        }
+
+        let wait = new Promise(resolve => {
+            if (container.hasOwnProperty(name)) {
+                resolve();
+            }
+            else {
+                Object.defineProperty(container, name, {
+                    get: () => wait,
+                    set: (v) => { Object.defineProperty(container,name, { value: v }); resolve(); },
+                    configurable: true
+                });
+            }
+        });
+
+        return wait;
+
+    }
+
+    function RegisterObjectKeys(obj, filter) {
+        if (typeof filter === 'function') {
+            Object.keys(obj).forEach(key => {
+                let name = filter(key);
+                if (name)
+                    RegisterDependency(name, obj[key]);
+            });
+        }
+        else {
+            Object.keys(obj).forEach(key => RegisterDependency(key, obj[key]));
+        }
+    }
 
     return {
         version: version,
         register: RegisterDependency,
         decorate: RegisterDecorator,
-        get: Get
+        get: Get,
+        whenRegistered: WaitUntilRegistered,
+        add: RegisterObjectKeys,
+        resolve: ResolveFunction
     };
 }();
