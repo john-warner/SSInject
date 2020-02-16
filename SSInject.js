@@ -223,7 +223,7 @@ $$Inject = function () {
 
     function WaitUntilRegistered(name) {
         if (container.hasOwnProperty(name) && container[name] instanceof Promise) {
-            return container[p];
+            return container[name];
         }
 
         let wait = new Promise(resolve => {
